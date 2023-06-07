@@ -1,0 +1,80 @@
+main{
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+}
+
+.sike{
+    width: 500px;
+    height: 800px;
+}
+
+.shadonk{
+    position:absolute;
+    bottom: 500px;
+    color: black;
+    font-size: 47px;
+    left: 550px;
+    text-align: center;
+    font-style: mobato;
+}
+
+.stuff{
+    font-size: 30px;
+    color: #0A0A0A;
+    position: absolute;
+    left: 590px;
+    bottom: 350px;
+    text-align: center;
+}
+
+.container1{
+    position:absolute;
+    left: 700px;
+    bottom: 300px;
+}
+
+.container2{
+    position:absolute;
+    left: 700px;
+    bottom: 380px;
+}
+
+.container{
+    position:absolute;
+    left: 750px;
+    bottom: 150px;
+
+}
+
+.cry1{
+    position:absolute;
+    width: 600px;
+    height:50px;
+    font-size: 15px;
+}
+
+.cry2{
+    position:absolute;
+    width: 600px;
+    height: 50px;
+    font-size: 15px;
+}
+
+.bigboi{
+    color: white;
+    background-color: orange;
+    position: absolute;
+    left: 100px;
+    height: 50px;
+    width: 250px;
+    font-size: 25px;
+    border-radius: 8px;
+    border-color: orange;
+}
+
+.button{
+    position: absolute;
+    bottom: 200px;
+    left:700px;
+}
