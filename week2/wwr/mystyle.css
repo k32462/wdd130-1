@@ -1,0 +1,128 @@
+/* ummm what is #10 and # 14? */
+#content {
+    max-width: 1600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#background {
+    height: 725px;
+}
+
+#body {
+    background-color: #fcfbfb;
+}
+
+#header{
+    background-color: rgba(20,30,13,.7);
+}
+
+nav a:hover {
+    background-color: black;
+    color:#d9c2a3;
+}
+
+.book{
+    background-color:#dac2a5;
+    color: black;
+}
+
+.join{
+    background-color:#dac2a5;
+    color: black;
+}
+
+.book:hover{
+    background-color:#dac2a5;
+    color: #d9c2a3;
+}
+
+.join:hover{
+    background-color:#dac2a5;
+    color: black;
+}
+
+#background{
+    background-color:#dac2a5;
+}
+
+.msg{
+    background-color:#6f7364;
+}
+
+footer{
+    background-color:#6f7364;
+    color: #d9c2a3;
+}
+
+.logo{
+    width: 80px;
+}
+
+.icon{
+    width: 80px;
+}
+
+.home-title{
+    color:black;
+}
+
+h4{
+    color: black;
+}
+
+.footer a:hover{
+background-color: black;
+color: #d9c2a3; 
+}
+
+
+nav a{
+    text-align:center;
+    color: white;
+    text-decoration: none;
+}
+
+footer p{
+    font-size: 1.2em;
+}
+
+footer p a:hover{
+    text-decoration: underline;
+}
+
+#hero-msg h1{
+    text-align: center;
+}
+
+#hero-msg h4{
+    text-align:center;
+}
+
+.button-box{
+    text-align:center;
+}
+
+main section{
+    text-align:center;
+}
+
+.msg h2{
+    color: white;
+}
+
+.msg p{
+    color: white;
+}
+
+#hero-img {
+    width:100%;
+}
+
+header{
+    background-color:#6f7364;
+}
+
+.nav {
+    text-align: left;
+}

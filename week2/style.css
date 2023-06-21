@@ -1,0 +1,46 @@
+body{
+    background-color: thistle;
+    margin: 0;
+}
+h1{
+    background-color: firebrick;
+    padding: 10px 20px;
+    margin: 20px;
+    border: 5px solid skyblue;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+}
+/* These take up space from left to right */
+
+/* ID will be called with pound*/
+#smaller {
+    background-color: #fff704;
+    padding: 10px 20px;
+    margin: 20px;
+    font-size: 1.3em;
+    color: lightslategray;
+    width: 50%;
+    margin: 0 auto;
+    /* OR */
+    /* max-width 500px */
+}
+
+/*Class will be called with '.' */
+
+.highlight{
+    background-color: #fff703;
+}
+
+h2{
+    background-color: purple;
+    margin: 20px;
+    border: 5px solid white;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+}
+
+.test2{
+    background-color: orange;
+}
