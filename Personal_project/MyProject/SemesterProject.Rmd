@@ -1,0 +1,221 @@
+---
+title: "Analyzing the Effects of COVID-19"
+output: 
+   html_document:
+     code_folding: hide
+     theme: cerulean
+---
+
+```{r, include = FALSE}
+#How has the COVID-19 pandemic affected different countries and regions?
+
+#What factors are associated with higher or lower rates of COVID-19 cases and deaths?
+
+#How effective have different vaccination strategies been in controlling the spread of COVID-19?
+
+library(tidyverse)
+library(ggplot2)
+library(scales)
+library(dplyr)
+library(gganimate)
+library(plotly)
+library(lubridate)
+library(transformr)
+library(ggthemes)
+library(timetk)
+library(dygraphs)
+
+# These libraries will help us map the globe
+library(sp)
+library(rgdal)
+library(leaflet)
+
+
+df <- read_csv('Data.csv')
+df <- df %>%
+  mutate(Cases = if_else(is.na(Cases), 0, Cases),
+         Deaths = if_else(is.na(Deaths), 0, Deaths),
+         `Daily tests` = if_else(is.na(`Daily tests`), 0, `Daily tests`),
+         Per = Cases/Population,
+         deathrate = Deaths/Cases)
+
+df2 <- df %>%
+  mutate(covidmonth = month(Date)) %>%
+  mutate(covidyear = year(Date))
+
+# this is just messing around for the visual
+
+df3 <- df2 %>% 
+  group_by(Entity,covidmonth,covidyear) %>% 
+  summarise(total = sum(Cases))
+
+df3$covid_date <- paste(df3$covidyear, df3$covidmonth, "01", sep = "-")
+
+test <- df %>%
+  filter(Date == c('2020-02-25','2020-02-26'))
+
+# Just in case we need it later
+#final.data <- left_join(df2, df3, by = c('Entity' = 'Entity', 'covidyear' = 'covidyear',
+   #                                      'covidmonth' = 'covidmonth'))
+
+```
+
+# Background
+
+In recent years, COVID-19 brought upon a pandemic as it impacted every nation around the globe. It has redefined living standards that we know of today such as national economies, social norms, and especially the health and loss of several citizens of each nation. The impact of the cases, deaths, and overall percent of the population impacted will be values accounted for in the following analysis.
+
+# What Percent of the Population was Effected?
+
+Displayed below is a graph depicting the prevalence of COVID-19 across the different continents, with each grid featuring multiple lines representing different countries within each continent. To diminish bias that may arise from countries with larger populations, the percentages were displayed rather than the total case counts. As displayed in the graph, it is clear that there is a steady upward trend in cases over the course of the year. This can be attributed to the reopening of states and countries around May and June of 2020, as evidenced by the COVID timeline provided by [**Yale Medicine.**](https://www.yalemedicine.org/news/covid-timeline)
+
+```{r, warning = FALSE, echo = TRUE}
+ggplot(df, aes(x= Date, y = Per, color = Entity)) +
+  geom_point(size = 0.01) +
+  geom_line(lty = 1) +
+  theme_update() +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_date(date_breaks = '4 months', date_labels = '%b %Y') +
+  facet_wrap(~Continent) +
+  theme(legend.position = 'none') +
+  labs(title = 'Cases by Population', y = 'Percent of Cases in Population',
+       x = 'Month')
+```
+
+As displayed in the visualization above, it becomes evident that the incidence of COVID-19 in the continent of Oceania is considerably lower than in other continents. Additionally, Oceania appears to maintain a consistent trend of low COVID-19 cases. Continually, a further understanding of the trends within individual countries in the Oceania is crucial to gain a deeper insight of the condition and its development overtime. Let's take a look deeper at the trends of the countries within the Oceanic continent and see how the trend changes over time.
+
+## How does the Oceania Differ from other Continents?
+
+```{r, warning = FALSE, echo = TRUE}
+df.oceania <- df %>%
+  filter(Continent == 'Oceania')
+
+ggplot(df.oceania, aes(x= Date, y = Per, color = Entity)) +
+  geom_point(size = 0.01) +
+  geom_line() +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_date(date_breaks = '4 months', date_labels = '%b %Y') +
+  facet_wrap(~Entity) +
+  labs(title = 'What Made the Oceania so Safe?', y = 'Percent of the Population w/ Covid') +
+  theme(legend.position = 'none')
+```
+
+```{r, include = FALSE}
+## Time Series Instead
+
+mydates <- c("2020-03-01", "2020-06-25")
+
+oceania.data <- df %>%
+  filter(Continent %in% c('Oceania')) %>%
+  group_by(Entity, Date) %>%
+  summarise(Average = mean(Per))
+
+oceania.final <- oceania.data %>%  
+  pivot_wider(names_from = Entity, 
+              values_from = Average,
+              id_cols = Date)
+
+dygraph(data = oceania.final) %>% 
+  dyRangeSelector(dateWindow = mydates) %>%
+  dyOptions(stackedGraph = TRUE) %>%
+  dyHighlight(highlightSeriesOpts = list(), highlightCircleSize = 5,
+              highlightSeriesBackgroundAlpha = 0.2)
+  
+```
+
+Displayed above is a representation of COVID-19 in three countries of the Oceanic continent - Australia, Fiji, and New Zealand. Notably, Australia demonstrated the highest rate of COVID-19 cases, just under 0.12%. These trends are considerably remarkable recognizing the significant impact COVID-19 has had on other continents. It is also worth noting that the Oceanic continent emerges as an outlier in the data, as compared to the world average with an average COVID case rate of 8.4%. This raises the question of whether these countries' geographic isolation and early proactive measures played a crucial role in keeping their COVID-19 cases low. Another thing to consider is New Zealands efficiency with the [**elimination strategy**](https://www.theguardian.com/world/commentisfree/2022/apr/05/new-zealands-covid-strategy-was-one-of-the-worlds-most-successful-what-can-it-learn-from-it) as well as Australia's effectiveness with their own [**proactivity.**](https://www.forbes.com/sites/williamhaseltine/2021/03/24/what-can-we-learn-from-australias-covid-19-response/?sh=1d55845b3a01) The spread of COVID grew drastically in its first year, let's take a look at how COVID has grown throughout the globe in the first year of the pandemic.
+
+
+## How Has the Spread of Covid Increased Overtime?
+
+Although COVID-19 was initially introduced in November 2019, its spread did not become apparent until January 2020, which is when data began to be recorded. To gain a deeper understanding of how COVID-19 has spread throughout the world during the first year of the pandemic, click on the 'Play' button on the slider below.
+
+```{r, warning = FALSE, echo = TRUE}
+## USE THIS CODE
+
+# fix the map legend to standard notation
+
+world <- map_data("world") %>%
+  filter(region != "Antarctica")
+
+joins.df <- df %>%
+  select(Entity,Latitude,Longitude) %>%
+  group_by(Entity) %>%
+  summarise(lat = median(Latitude),
+            long = median(Longitude))
+
+plot.join <- left_join(df3, joins.df, by = 'Entity') %>%
+  mutate(covid_date = as.Date(covid_date)) %>%
+  select(-covidyear) %>%
+  rename(Date = covid_date)
+
+mywork <- world %>%
+  ggplot() +
+  geom_polygon(aes( x= long, y = lat, group = group),
+               fill = "grey",
+               color = "white",
+               size = 0.01) +
+  geom_point(data = plot.join, 
+             aes(x = long, 
+                 y = lat, 
+                 frame = Date,
+                 size = total,
+                 color = total)) +
+#  scale_fill_gradient(low = "cyan", high = "dodgerblue") +
+ # scale_color_gradient2(low = "cyan", mid='dodgerblue' ,high = "darkblue") +
+  scale_color_continuous(labels = comma) +
+  labs( title = "Growth of Covid Jan 2020 - Feb 2021",
+        color = 'Total Cases') +
+  theme_map() +
+  scale_size_continuous(guide = F) +
+#  scale_color_continuous(name = "Type") +  # use continuous scale for color
+  theme(plot.title = element_text(size = 10, hjust = 0.5))
+
+
+fig_2 <- ggplotly(mywork) %>% 
+  animation_slider(currentvalue = list(prefix = "Year ", font = list(color="orange")))
+
+fig_2
+```
+
+After observing the temporal progression of COVID-19 cases, it becomes evident that certain highly populated nations concluded the first year with more cases. This could be attributed to the high population density of their larger cities, as seen in countries such as the United States and India.
+
+# How Many Lives Were Lost in the First Year of the Pandemic?
+
+Without a doubt, COVID-19 has proven to be one of the most dangerous diseases the world has witnessed in the last century since the rise of the Spanish Flu outbreak in 1920. Sadly, COVID-19 has claimed the lives of hundreds of thousands of individuals across the globe. To gain a deeper understanding of the toll taken by the virus in its first year of existence, let's look at the total amount of lives lost from the pandemic.
+
+```{r, warning = FALSE, echo = TRUE}
+df.sum <- df2 %>%
+  group_by(Continent) %>%
+  summarise(totaldeaths = sum(Deaths)) %>%
+  arrange(desc(totaldeaths))
+
+my.df.sum <- df2 %>%
+  group_by(Entity) %>%
+  summarise(totaldeaths = max(Deaths)) 
+
+total.df.sum <- left_join(df2, my.df.sum, by = 'Entity')
+
+okay.fr.sum <- total.df.sum %>%
+  filter(Date == '2020-02-25') %>%
+  group_by(Continent) %>%
+  summarise(mytotal = sum(totaldeaths))
+
+
+
+
+ggplot(okay.fr.sum, aes(x = reorder(Continent,-mytotal), y = mytotal)) +
+  geom_bar(stat = 'identity', color = 'black', fill = 'darksalmon') + # stat = identity since the values are already given
+  geom_text(aes(label = scales::comma(mytotal)), vjust = -1) +
+  scale_y_continuous(labels = scales::comma,
+                     breaks = c(150000,450000,750000,1000000),
+                     limits=c(0, 775000)) +
+  theme(legend.position = 'none') +
+  labs(y = 'Total Deaths', x = 'Continent', title = 'How many lives were lost in the first year of the pandemic?') +
+  theme_update()
+```
+
+The data shows a dramatic contrast between the toll that COVID-19 took on North America versus Oceania. The North American continent faced an immense level of tragedy, with the highest number of deaths caused by COVID-19. In contrast, the Oceania region was comparatively less affected, with 0.12% of the total deaths reported in North America during the first year of the pandemic.
+
+## Conclusion
+
+Undoubtedly, COVID-19 has had a significant and far-reaching impact on the world in recent years. However, through careful analysis of the measures implemented by various nations and their corresponding outcomes, it is possible to gain a deeper understanding of how to control the spread of the virus. By examining the successful examples of nations such as those in the Oceania region, which have managed to maintain a low percentage of cases, we can deepen our understanding for proactive measures that can help reduce the spread of future outbreaks.
