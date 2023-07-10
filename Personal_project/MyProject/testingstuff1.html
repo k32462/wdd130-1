@@ -86,7 +86,7 @@
             <div class="container">
                 <img src="img/corolla.png" alt="Avatar" class="image">
                 <div class="overlay">
-                    <a href="https://k32462.github.io/wdd130/CarSellingPrice-425-.html#">
+                    <a href="https://k32462.github.io/wdd130-1/Personal_project/MyProject/CarSellingPrice-425-.html">
                         <div class="text">VIEW</div>
                 </div>
                 </a>
@@ -94,7 +94,7 @@
             <div class="container">
                 <img src="img/covid.png" alt="Avatar" class="image">
                 <div class="overlay">
-                    <a href="https://k32462.github.io/wdd130/SemesterProject.html">
+                    <a href="https://k32462.github.io/wdd130-1/Personal_project/MyProject/SemesterProject.html">
                         <div class="text">VIEW</div>
                 </div>
                 </a>
@@ -121,6 +121,24 @@
         </div>
 
         <a class = 'resume' href="myfile.pdf" download="Kenny Ceron's Resume">Download My Resume!</a>
+
+        <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" id="scrollButton">Scroll to Top</button>
+
+        <script>
+            // Show the scroll button when the user scrolls down a certain distance
+            window.onscroll = function() {
+                showScrollButton();
+            };
+
+            function showScrollButton() {
+                var scrollButton = document.getElementById("scrollButton");
+                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    scrollButton.style.display = "block";
+                } else {
+                    scrollButton.style.display = "none";
+                }
+            }
+        </script>
 
         
 
